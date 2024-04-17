@@ -105,7 +105,7 @@ fetch(apiEndpoint)
         playAnimation = true;
         let start;
         const duration = 5800;
-        const endPos = -(34 * 271 + Math.random() * 271); 
+        const endPos = -(34 * 263.5 + Math.random() * 263.5) + 7.5; 
         
         function easeOutCubic(t) {
             return (--t)*t*t+1;
