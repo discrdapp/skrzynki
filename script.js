@@ -105,7 +105,7 @@ fetch(apiEndpoint)
         playAnimation = true;
         let start;
         const duration = 5800;
-        const endPos = -(34 * 263.5 + Math.random() * 263.5) + 7.5; 
+        const endPos = -(35 * 263.5 + Math.random() * 263.5) + 7.5; 
         
         function easeOutCubic(t) {
             return (--t)*t*t+1;
@@ -169,6 +169,7 @@ fetch(apiEndpoint)
                         }
                     }
                     let skinWylosowany = skinyDoWyLosowania[Math.floor(Math.random()* skinyDoWyLosowania.length)];
+                    console.log(skinWylosowany);
                     const itemInCase = document.createElement("div")
                     itemInCase.classList.add("skinWSkrzynce")
                     itemInCase.style.backgroundImage = `url('${skinWylosowany.image}'), radial-gradient(rgba(121,121,121,1), rgba(97,95,101,1))`;
