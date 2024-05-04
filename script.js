@@ -4,6 +4,8 @@ let caseKnives = {}
 let caseId = 1;
 const casesElement = document.getElementById('cases');
 
+let skinWylosowany;
+
 fetch(apiEndpoint)
     .then(response => response.json())
     .then(data => {
@@ -87,6 +89,25 @@ fetch(apiEndpoint)
         openButton.addEventListener('click', opcjePrzycisk)
         openButton.myid = id;
     }       
+
+    function openedSkin(id, skin) {
+        const openCase = document.getElementById("openCase");
+        const openedSkin = document.getElementById("openSkin");
+
+        openCase.classList.remove("d-flex");
+        openCase.classList.add("d-none");
+        openedSkin.classList.remove("d-none");
+        openedSkin.classList.add("d-block");
+
+        const openedSkinName = document.getElementById("openedSkinName");
+        const openedSkinRarity = document.getElementById("openedSkinRarity");
+        const openedSkinImage = document.getElementById("openedSkinImage");
+        const openedSkinInfo = document.getElementById("openedSkinInfo");
+        const openedSkinButtons = document.getElementById("openedSkinButtons");
+
+        
+
+    }
     function opcjePrzycisk(evt) {
         let id = evt.currentTarget.myid
         if (!pierwszy) {
@@ -123,6 +144,10 @@ fetch(apiEndpoint)
         
             if (elapsed < duration && playAnimation) {
                 window.requestAnimationFrame(step);
+            } else {
+                setTimeout(() => {
+                    openedSkin(id, skinWylosowany)                  
+                }, 100);
             }
         }
 
@@ -168,7 +193,7 @@ fetch(apiEndpoint)
                             skinyDoWyLosowania.push(skin[j])    
                         }
                     }
-                    let skinWylosowany = skinyDoWyLosowania[Math.floor(Math.random()* skinyDoWyLosowania.length)];
+                    skinWylosowany = skinyDoWyLosowania[Math.floor(Math.random()* skinyDoWyLosowania.length)];
                     console.log(skinWylosowany);
                     const itemInCase = document.createElement("div")
                     itemInCase.classList.add("skinWSkrzynce")
@@ -181,7 +206,7 @@ fetch(apiEndpoint)
                     itemInCase.appendChild(itemOverlay)
                     break;
                 } else {
-                    let skinWylosowany = caseKnives[id][Math.floor(Math.random()* caseKnives[id].length)]
+                    skinWylosowany = caseKnives[id][Math.floor(Math.random()* caseKnives[id].length)]
                     const itemInCase = document.createElement("div")
                     itemInCase.classList.add("skinWSkrzynce")
                     itemInCase.style.backgroundImage = `url('https://waxpeer.com/img/collection/00.png'), radial-gradient(rgba(121,121,121,1), rgba(97,95,101,1))`;
