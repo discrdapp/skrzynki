@@ -86,77 +86,103 @@ fetch(apiEndpoint)
         knife.appendChild(skinBottomLine)
         usunToCoWSkrzynce();
         losujSkinyDoSkrzynki(id);
-        openButton.addEventListener('click', opcjePrzycisk)
+        openButton.addEventListener('click', otworzPrzycisk)
         openButton.myid = id;
-    }       
+    } 
+    
+    const openSkin = document.getElementById("openedSkin");
+    const openedSkinButtonsClose = document.getElementById("openedSkinButtonsClose");
+    openedSkinButtonsClose.addEventListener('click', () => {
+        openCase.classList.remove("d-none");
+        openCase.classList.add("d-flex");
+        openSkin.classList.add("d-none");
+    })
+    document.addEventListener('keydown', (e) => {
+        if (e.key == "Escape" && openCase.classList.contains('d-none') && !openSkin.classList.contains('d-none')) {
+            openCase.classList.remove("d-none");
+            openCase.classList.add("d-flex");
+            openSkin.classList.add("d-none");
+            openSkin.classList.remove("opacity");
+        }
+    })
 
-    function openedSkin(id, skin) {
-        const openCase = document.getElementById("openCase");
-        const openedSkin = document.getElementById("openSkin");
-
+    function openedSkin(skin) {
         openCase.classList.remove("d-flex");
         openCase.classList.add("d-none");
-        openedSkin.classList.remove("d-none");
-        openedSkin.classList.add("d-block");
+        openSkin.classList.remove("d-none");
+        openSkin.classList.add("opacity");
 
         const openedSkinName = document.getElementById("openedSkinName");
         const openedSkinRarity = document.getElementById("openedSkinRarity");
         const openedSkinImage = document.getElementById("openedSkinImage");
         const openedSkinInfo = document.getElementById("openedSkinInfo");
-        const openedSkinButtons = document.getElementById("openedSkinButtons");
 
-        
-
-    }
-    function opcjePrzycisk(evt) {
-        let id = evt.currentTarget.myid
-        if (!pierwszy) {
-            usunToCoWSkrzynce();
-            losujSkinyDoSkrzynki(id);
-        }
-        pierwszy = false;   
-        if (audio.currentTime > 0 && !audio.paused && !audio.ended 
-            && audio.readyState > audio.HAVE_CURRENT_DATA) {
-            audio.pause();
-            audio.currentTime = 0;
-            audio.play();
+        openedSkinName.innerHTML = skin.name;
+        if (skin.rarity.name != 'Exceedingly Rare') {
+            openedSkinRarity.style.backgroundColor = skin.rarity.color;
         } else {
-            audio.play();
+            openedSkinRarity.style.backgroundColor = '#fbd413';
         }
-        playAnimation = true;
-        let start;
-        const duration = 5800;
-        const endPos = -(35 * 263.5 + Math.random() * 263.5) + 7.5; 
-        
-        function easeOutCubic(t) {
-            return (--t)*t*t+1;
-        }
-        
-        function step(timestamp) {
-            if (start === undefined)
-                start = timestamp;
-            const elapsed = timestamp - start;
-        
-            let t = elapsed / duration;
-            let easedT = easeOutCubic(t);
-            let newX = easedT * endPos;
-            mainCase.style.transform = 'translateX(' + newX + 'px)';
-        
-            if (elapsed < duration && playAnimation) {
-                window.requestAnimationFrame(step);
-            } else {
-                setTimeout(() => {
-                    openedSkin(id, skinWylosowany)                  
-                }, 100);
-            }
-        }
+        openedSkinImage.style.backgroundImage = `url('${skin.image}')`;
+        openedSkinInfo.innerHTML = skinDescription(skin);
+    }
 
-        window.requestAnimationFrame(step);
-        
+    function skinDescription(skin) {
+        let jakiSkin = skin.name.split(" | ")[0];
+        return skinDescriptions[jakiSkin]
+    }
+
+let openingAnimationInProgress = false;
+    function otworzPrzycisk(evt) {
+        if (!openingAnimationInProgress) {
+            openingAnimationInProgress = true;
+            let id = evt.currentTarget.myid
+            if (!pierwszy) {
+                usunToCoWSkrzynce();
+                losujSkinyDoSkrzynki(id);
+            }
+            pierwszy = false;   
+            if (audio.currentTime > 0 && !audio.paused && !audio.ended 
+                && audio.readyState > audio.HAVE_CURRENT_DATA) {
+                audio.pause();
+                audio.currentTime = 0;
+                audio.play();
+            } else {
+                audio.play();
+            }
+            playAnimation = true;
+            let start;
+            const duration = 5800;
+            const endPos = -(35 * 263.5 + Math.random() * 263.5) - 7.5; 
+            
+            function easeOutCubic(t) {
+                return (--t)*t*t+1;
+            }
+            
+            function step(timestamp) {
+                if (start === undefined)
+                    start = timestamp;
+                const elapsed = timestamp - start;
+            
+                let t = elapsed / duration;
+                let easedT = easeOutCubic(t);
+                let newX = easedT * endPos;
+                mainCase.style.transform = 'translateX(' + newX + 'px)';
+            
+                if (elapsed < duration && playAnimation) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    openingAnimationInProgress = false;
+                    openedSkin(skinWylosowany)              
+                }
+            }
+
+            window.requestAnimationFrame(step);
+        }
     };
 
     closeButton.addEventListener('click', () => {
-        openButton.removeEventListener('click', opcjePrzycisk);
+        openButton.removeEventListener('click', otworzPrzycisk);
         mainCase.style.transform = '';
         playAnimation = false;
         pierwszy = true;
@@ -194,7 +220,6 @@ fetch(apiEndpoint)
                         }
                     }
                     skinWylosowany = skinyDoWyLosowania[Math.floor(Math.random()* skinyDoWyLosowania.length)];
-                    console.log(skinWylosowany);
                     const itemInCase = document.createElement("div")
                     itemInCase.classList.add("skinWSkrzynce")
                     itemInCase.style.backgroundImage = `url('${skinWylosowany.image}'), radial-gradient(rgba(121,121,121,1), rgba(97,95,101,1))`;
