@@ -2,6 +2,7 @@ const apiEndpoint = 'https://bymykel.github.io/CSGO-API/api/en/crates.json';
 let caseSkins = {};
 let caseKnives = {}
 let caseId = 1;
+let closedCase = true;
 const casesElement = document.getElementById('cases');
 
 let skinWylosowany;
@@ -50,6 +51,8 @@ fetch(apiEndpoint)
     function pokazSkrzynke(id) {
 
         const skins = caseSkins[id];
+
+        closedCase = false;
     
         openCase.classList.remove("d-none");
         openCase.classList.add("d-flex");
@@ -173,7 +176,9 @@ let openingAnimationInProgress = false;
                     window.requestAnimationFrame(step);
                 } else {
                     openingAnimationInProgress = false;
-                    openedSkin(skinWylosowany)              
+                    if (!closedCase) {
+                        openedSkin(skinWylosowany)
+                    }     
                 }
             }
 
@@ -183,6 +188,7 @@ let openingAnimationInProgress = false;
 
     closeButton.addEventListener('click', () => {
         openButton.removeEventListener('click', otworzPrzycisk);
+        closedCase = true;
         mainCase.style.transform = '';
         playAnimation = false;
         pierwszy = true;
